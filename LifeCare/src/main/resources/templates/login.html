@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login Form</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+	<link rel="stylesheet" th:href="@{/css/login.css}">
+	<link rel="icon" type="image/x-icon" th:href="@{/css/images.png}">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+
+<body>
+	<div class="hero">
+		<div class="form-box">
+			<div id="logo"><i class="material-symbols-outlined" style="color:darkcyan;">
+					cardiology</i><b style="color:darkcyan;">LifeCare</b></div>
+			<div class="button-box">
+				<div id="btn"></div>
+				<button type="button" class="toggle-btn">Log In</button>
+				<a th:href="@{/registration}"><button type="button" class="toggle-btn">Register</button></a>
+			</div>
+			<div class="message" th:if="${param.error}" style="color: red;">
+				Invalid Username or Password
+			</div>
+			<div class="message" th:if="${param.logout}" style="color: green;">
+				Logout Successful
+			</div>
+			<div class="message" th:if="${registrationSuccessMessage}">
+				<p th:text="${registrationSuccessMessage}" style="color: green;"></p>
+			</div>
+			<form th:action="@{/login}" method="post" class="input-group">
+				<input type="email" class="input-field" id="username" name="username"
+					pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" oninput="this.value = this.value.toLowerCase()"
+					placeholder="Enter your email" required>
+				<input type="password" class="input-field" id="password" name="password"
+					placeholder="Enter your password" required>
+				<button type="submit" class="submit-btn">Log In</button>
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" th:href="@{/css/error.css}">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<title>Error - Access Forbidden</title>
+</head>
+
+<body>
+	<div class="error-container">
+		<h1>Error - Access Forbidden</h1>
+		<a th:href="@{/login}"><button type="button" class="btn btn-primary">Login</button></a>
+		<h5>Please login to proceed...! </h5>
+		<p th:text="${errorMessage}"></p>
+	</div>
+</body>
+
+</html>

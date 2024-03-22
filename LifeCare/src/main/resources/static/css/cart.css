@@ -1,0 +1,196 @@
+body,
+h1,
+h2,
+h3,
+ul,
+li,
+p {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: 'Arial', sans-serif;
+	background-color: #f5f5f5;
+	color: #333;
+}
+
+.header {
+	background-color: #0bb992;
+	color: #fff;
+	padding: 30px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.header .navbar-brand {
+	text-decoration: none;
+	color: #fff;
+	font-size: 25px;
+}
+
+.header-right {
+	display: flex;
+	align-items: right;
+	margin-right: 20px;
+	position: absolute;
+	float: right;
+	right: 20px;
+}
+
+.logout-container {
+	align-items: right;
+	text-decoration: none;
+	display: flex;
+	justify-content: right;
+	float: right;
+}
+
+.logout button {
+	display: inline-block;
+	padding: 10px 20px;
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	border: 2px solid #ffffff;
+	color: #156446;
+	background-color: #fff;
+	border-radius: 5px;
+	transition: background-color 0.3s, color 0.3s;
+
+}
+
+.logout button:hover {
+	background-color: #077c62;
+	color: #fff;
+}
+
+.header h1 {
+	font-size: 2em;
+}
+
+.medicine-container {
+	margin: 20px auto;
+	width: 80%;
+}
+
+.list {
+	color: #077c62;
+	text-align: center;
+	margin-top: 20px;
+	margin-bottom: 15px;
+}
+
+#totalPrice,
+#payableAmount {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #077c62;
+    text-align: right;
+}
+
+table tbody td #quantity {
+	text-align: center;
+	font-weight: bolder;
+}
+
+button {
+	background-color: #0bb992;
+	color: #fff;
+	padding: 10px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: #077c62;
+}
+
+.no-items {
+	text-align: center;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 20px 0;
+}
+
+th,
+td {
+	border: 1px solid #077c62;
+	padding: 12px;
+	text-align: center;
+}
+
+th {
+	background-color: #0bb992;
+	color: white;
+}
+
+td {
+	padding: 12px;
+	text-align: left;
+}
+
+td:nth-child(3),
+td:nth-child(4) {
+	text-align: center;
+}
+
+td:nth-child(5) {
+	text-align: center;
+}
+
+td:nth-child(6) {
+	text-align: center;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    float: right;
+}
+ 
+.dropdown:hover .dropdown-content {
+    display: block;
+    left: -140px;
+    opacity: 1;
+}
+ 
+.dropdown-content p {
+    padding: 10px;
+    text-align: left;
+}
+ 
+.sos-card-details-container {
+    text-align: center;
+    margin-top: 20px;
+}
+ 
+.sosCardDetails {
+    background-color: #0bb992;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+}
+ 
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    width: 250px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    padding: 15px;
+    border-radius: 8px;
+    right: 120;
+    opacity: 0;
+    transition: right 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}

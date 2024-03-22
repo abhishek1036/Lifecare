@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Buyer Dashboard</title>
+	<link rel="stylesheet" href="/css/styles.css">
+	<link rel="stylesheet" href="/css/logout.css">
+	<script th:src="@{/css/alert.js}"></script>
+	<link rel="icon" type="image/x-icon" href="/css/images.png">
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+	<div class="header">
+		<a class="navbar-brand" th:href="@{/buyer}"> <span> <img height="21px" src="/css/images.png" alt="Icon">
+				LifeCare
+			</span>
+		</a>
+		<div class="header-center">
+			<h1>Welcome [[${userName}]]</h1>
+		</div>
+		<div class="header-right">
+		<div class="profile-container">
+                <button class="profile" th:href="@{/user-profile}" style="border-color: white; align-items: right;"
+                    onclick="toggleDropdown()">
+                    <i class="material-icons" style="font-size: 28px; color: white;">account_circle</i>
+                </button>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <a th:text="${userName}" id="userName"></a><br><br>
+                    <a th:text="'Email: ' + ${userEmail}" id="userEmail"></a>
+
+                </div>
+			</div>
+			<span sec:authorize="isAuthenticated" class="logout-container">
+				<a class="logout" th:href="@{/logout}">
+					<button onclick="confirmLogout(event)">
+						<i class="material-icons" style="font-size: 20px; height: 20px; width: 20px;">logout</i>
+						<span><b>Logout</b></span>
+					</button>
+				</a>
+			</span>
+		</div>
+	</div>
+	<div>
+		<br>
+		<form class="search-container" th:action="@{/buyer}" method="get">
+			<input type="text" id="searchInput" name="searchTerm" placeholder="Type to Search...">
+			<button type="submit">
+				<i class="material-icons">search</i>
+			</button>
+		</form>
+	</div>
+	<form th:action="@{/buyer/cart/viewCart/{userId}(userId=${userId})}" method="get">
+		<input type="hidden" name="userId" value="${userId}" />
+		<button type="submit" style="float: right; margin-right: 30px; margin-top: 20px;">
+			<i class="material-icons" style="font-size: 28px; color: white; height: 25px; width: 28px">shopping_cart</i>
+		</button>
+	</form>
+	<div class="no-medicines" th:if="${#lists.isEmpty(medicines)}">
+		<br> <br> <br>
+		<h1>No Medicines.</h1>
+		<br> <br>
+
+	</div>
+	<div class="medicine-container" th:unless="${#lists.isEmpty(medicines)}">
+		<br>
+		<h1 class="list">Medicine Details</h1>
+		<table border="1">
+			<caption></caption>
+			<tr>
+				<th></th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Price(₹)</th>
+				<th>Count</th>
+				<th>Action</th>
+			</tr>
+			<tr th:each="med : ${medicines}" th:if="${med.count > 0}">
+				<th:block
+					th:if="${searchTerm==null or med.medicineName.toLowerCase().contains(searchTerm.toLowerCase())}">
+					<td><input type="checkbox" name="selectedMedicinesIds" id="medicinestocart"
+							th:value="${med.medicineId}"></td>
+					<td><b><span th:text="${med.medicineName}"></span></b><br>
+						<small>Sold By:</small><b><small th:text="${med.user?.userName}"></small></b>
+					</td>
+					<td>
+						<p th:text="${med.description}">
+					</td>
+					<td><span th:text="${med.price}"></span></td>
+					<td>
+						<p th:text="${med.count}">
+					</td>
+					<td>
+
+						<form
+							th:action="@{/buyer/cart/add-to-cart/{userId}/{medicineId}(userId=${userId},medicineId=${med.medicineId})}"
+							method="post">
+							<input type="hidden" name="userId" value="${userId}" /> <input type="hidden"
+								name="medicineId" value="${med.medicineId}" /> <input type="hidden" name="quantity"
+								value="1" />
+
+							<button class="add-to-cart-button" onclick="addToCart()">Add
+								to Cart</button>
+
+						</form>
+					</td>
+				</th:block>
+			</tr>
+		</table>
+	</div>
+	<div id="Addlistofmedicine">
+		<form th:action="@{/buyer/cart/add-to-cart-multy}" method="post" id="addToCartForm">
+			<input type="hidden" name="userId" th:value="${userId}" /> <input type="hidden" name="selectedMedicinesIds"
+				id="selectedMedicinesIds" />
+			<button class="addToCartButton" onclick="addMedicinesToCart()">
+				<span>Add List of Medicines to Cart</span>
+			</button>
+		</form>
+	</div>
+	
+	<th:block th:if="${totalPages != null}">
+		<div th:unless="${disablePagination}">
+			<div class="pagination">
+				&nbsp; &nbsp;
+				<th:block th:if="${totalPages <= 10}">
+					<span th:each="i: ${#numbers.sequence(1, totalPages)}">
+						<a th:if="${currentPage != i}" th:href="@{'/buyer/page/' + ${i}}">
+							[[${i}]]
+						</a>
+						&nbsp;&nbsp;
+						<span class="span-css" th:unless="${i != currentPage}">[[${i}]]</span>
+					</span>
+				</th:block>
+ 
+				<th:block th:if="${totalPages > 10}">
+					<th:block th:if="${currentPage <= 5 || currentPage > totalPages-4}">
+						<span th:each="i: ${#numbers.sequence(1, 5)}">
+							<a th:if="${currentPage != i}" th:href="@{'/buyer/page/' + ${i}}">
+								[[${i}]]
+							</a>
+ 
+							&nbsp;&nbsp;
+							<span class="span-css" th:unless="${i != currentPage}">[[${i}]]</span>
+						</span>
+						<a th:if="${currentPage != i}" th:href="@{'/buyer/page/' + 6}">
+							...
+						</a>
+						&nbsp;&nbsp;
+						<span class="span-css" th:unless="${i != currentPage}">[[${i}]]</span>
+ 
+						<span th:each="i: ${#numbers.sequence(totalPages-4, totalPages)}"></span>
+							<a th:if="${currentPage != i}" th:href="@{'/buyer/page/' + ${i}}">
+								[[${i}]]
+							</a>
+							&nbsp;&nbsp;
+							<span class="span-css" th:unless="${i != currentPage}">[[${i}]]</span>
+ 
+					</th:block>
+ 
+					<th:block th:if="${currentPage > 5 && currentPage <= totalPages-4}">
+						<a th:if="${currentPage != i}" th:href="@{'/buyer/page/' + ${currentPage - 5}}">
+							...
+						</a>
+						&nbsp;&nbsp;
+						<span class="span-css" th:unless="${currentPage - 5 != currentPage}">[[${currentPage - 5}]]</span>
+						
+ 
+						<span th:each="i: ${#numbers.sequence(currentPage - 4, currentPage + 4)}">
+							<a th:if="${currentPage != i}" th:href="@{'/buyer/page/' + ${i}}">
+								[[${i}]]
+							</a>
+							&nbsp;&nbsp;
+							<span class="span-css" th:unless="${i != currentPage}">[[${i}]]</span>
+						</span>
+ 
+						&nbsp;&nbsp;
+						<a th:if="${currentPage != i}" th:href="@{'/buyer/page/' + ${currentPage + 5}}">
+							...
+						</a>
+						&nbsp;&nbsp;
+						<span class="span-css" th:unless="${currentPage + 5 != currentPage}">[[${currentPage + 5}]]</span>
+						
+					</th:block>
+				</th:block>
+				&nbsp;&nbsp;
+			</div>
+		</div>
+	</th:block>
+	
+	
+	<div id="message" class="message">
+		<p th:if="${message}" th:text="${message}"></p>
+	</div>
+	<script th:src="@{/css/seller-buyer.js}"></script>
+</body>
+
+</html>

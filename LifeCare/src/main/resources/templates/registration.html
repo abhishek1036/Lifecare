@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Registration Form</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+	<link rel="stylesheet" th:href="@{/css/registration.css}">
+	<link rel="icon" type="image/x-icon" th:href="@{/css/images.png}">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+
+<body>
+	<div class="hero">
+		<div class="form-box">
+			<div id="logo"><i class="material-symbols-outlined" style="color:darkcyan;">
+					cardiology</i><b style="color:darkcyan;">LifeCare</b></div>
+			<div class="button-box">
+				<div id="btn"></div>
+				<a th:href="@{/login}"><button type="button" class="toggle-btn">Log
+						In</button></a>
+				<button type="button" class="toggle-btn" onclick="register()">Register</button>
+			</div>
+			<div class="message" th:if="${message != null}">[[${message}]]
+			</div>
+			<form th:action="@{/registration}" method="post" role="form" th:object="${user}" class="input-group">
+				<input type="text" class="input-field" id="userName" name="userName" pattern="[A-Za-z]{3,}"
+					placeholder="Enter your Name"
+					oninvalid="setCustomValidity('Name should be more than 3 characters and contain only letters')"
+					onchange="try{setCustomValidity('')}catch(e){}" required>
+				<input type="email" class="input-field" id="email" name="email"
+					pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" oninput="this.value = this.value.toLowerCase()"
+					placeholder="Enter your email" required>
+				<input type="password" class="input-field" id="password" name="password"
+					pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+					title="Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&)"
+					placeholder="Enter your password" required>
+				<input type="password" class="input-field" id="confirmPassword" name="confirmPassword"
+					pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+					title="Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&)"
+					placeholder="Enter your Confirm password" required>
+				<h5 id="passwordmessage" style="color:red;"></h5>
+				<input type="tel" class="input-field" id="phoneNumber" name="phoneNumber" pattern="[0-9]{10}"
+					maxlength="10" title="Phone Number Should contain only Digits" placeholder="Enter your Phone Number"
+					required>
+				<select class="input-field" id="role" name="role" required>
+					<option value="">Select your role</option>
+					<option value="SELLER">SELLER</option>
+					<option value="BUYER">BUYER</option>
+				</select>
+				
+				<button type="submit" class="submit-btn">Register</button>
+			</form>
+		</div>
+	</div>
+	<script th:src="@{/css/script.js}"></script>
+</body>
+
+</html>

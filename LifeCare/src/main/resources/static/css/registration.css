@@ -1,0 +1,27 @@
+.form-box {
+	top: -70px;
+	height: 680px;
+	width: 450px;
+}
+
+#btn {
+	left: 110px;
+	width: 110px;
+}
+
+.input-group {
+	width: 350px;
+	height: 400px;
+}
+
+.message {
+	color: red;
+}
+/*
+.label-gov {
+	padding: 20px;
+}*/
+
+input[type="radio"] {
+	margin: 10px;
+}

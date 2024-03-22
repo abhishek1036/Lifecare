@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seller Dashboard</title>
+<link rel="stylesheet" th:href="@{/css/styles.css}">
+<link rel="stylesheet" th:href="@{/css/logout.css}">
+<script th:src="@{/css/alert.js}"></script>
+<link rel="icon" type="image/x-icon" th:href="@{/css/images.png}">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+	rel="stylesheet">
+</head>
+
+<body>
+	<div class="header">
+		<span style="font-size: 25px;"><img height="21px"
+			src="/css/images.png" alt="Medicine image">LifeCare</span>
+		<div class="header-center">
+			<h1>Welcome [[${userName}]]</h1>
+		</div>
+		<div class="header-right">
+			<span sec:authorize="isAuthenticated" class="logout-container">
+				<a class="logout" th:href="@{/logout}"><button
+						onclick="confirmLogout(event)">
+						<i class="material-icons"
+							style="font-size: 20px; height: 20px; width: 20px">logout</i>Logout
+					</button></a>
+			</span>
+		</div>
+	</div>
+	<div class="form-box">
+		<div id="popupForm" class="popup">
+			<button class="close" onclick="togglePopup()">
+				<span><b>X</b></span>
+			</button>
+			<span th:if="${message}" style="color: red;"><small>${message}</small></span>
+			<h2>Add New Medicine</h2>
+			<form th:action="@{/seller/addnew}" method="post"
+				th:object="${medicine}" class="input-group">
+				<div class="form-group">
+					<input type="text" class="input-field" id="medicineName"
+						name="medicineName" placeholder="Enter Medicine Name"
+						oninput="checkExistingMedicine()" required><br /> <span
+						id="medicineNameError"
+						style="color: red; font-size: 13px; font-weight: bold;"></span>
+				</div>
+				<div class="form-group">
+					<input type="text" class="input-field" id="medicineDescription"
+						name="description" placeholder="Enter Medicine Description"
+						required>
+				</div>
+				<div class="form-group">
+					<input type="text" class="input-field" id="price" name="price"
+						min="1" maxlength="8" placeholder="Enter Medicine price"
+						pattern="\d+(\.\d{1,2})?"
+						oninput="this.value = Math.abs(parseInt(this.value.replace(/[^0-9]*/g, ''))) >0 ? this.value : this.value.slice(0, -1);"
+						required>
+				</div>
+				<div class="form-group">
+					<input type="number" class="input-field" id="count" min="1"
+						name="count" maxlength="5" placeholder="Enter Medicine count"
+						value="${medicine.count}"
+						onkeydown="if(this.key==='.'){this.preventDefault();}"
+						oninput="this.value = Math.abs(parseInt(this.value.replace(/[^0-9]*/g, ''))) <= 99999 ? this.value : this.value.slice(0, -1);"
+						required>
+				</div>
+				
+				<button type="button" onclick="togglePopup()"
+					class="cancel-btn-form">Cancel</button>
+				<button type="reset" class="reset-btn-form">Reset</button>
+				<button type="submit" class="submit-btn-form">Add Medicine</button>
+			</form>
+		</div>
+	</div>
+	<div>
+		<form class="search-container" th:action="@{/seller}" method="get">
+			<input type="text" id="searchInput" name="searchTerm"
+				placeholder="Type to Search...">
+			<button type="submit">
+				<i class="material-icons">search</i>
+			</button>
+
+		</form>
+		<button onclick="togglePopup()"
+			style="float: right; margin-right: 30px;">Add new Medicine</button>
+	</div>
+	
+	<div class="no-medicines" th:if="${#lists.isEmpty(medicine)}">
+		<br> <br> <br>
+		<h1>No Medicines.Please add new medicine.</h1>
+		<br> <br>
+	</div>
+
+	<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+		<span th:text="${errorMessage}"></span>
+	</div>
+
+	<div th:if="${param.message}" class="alert alert-danger" role="alert">
+		<span th:text="${param.message}"></span>
+	</div>
+
+	<div th:unless="${#lists.isEmpty(medicine)}">
+		<div>
+			<br>
+			<h1 class="list">Medicine Details</h1>
+			<table border="1" >
+				<caption class="caption"></caption>
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Price(₹)</th>
+					<th>Count</th>
+					<th>Action</th>
+				</tr>
+				<tr th:each="medicines : ${medicine}">
+					<th:block
+						th:if="${searchTerm==null or medicines.medicineName.toLowerCase().contains(searchTerm.toLowerCase())}">
+						<td class="medicine-name-cell" th:text="${medicines.medicineName}"></td>
+						<td th:text="${medicines.description}"></td>
+						<td th:text="${medicines.price}"></td>
+						<td><span th:text="${medicines.count}" class="editable"
+							contenteditable="true" oninput="handleCountEdit(this)"
+							data-original-value="${medicines.count}"> </span> <input
+							type="hidden" th:value="${medicines.medicineId}" id="med" /></td>
+
+						
+						<td><a class="delete"
+							th:href="@{/seller/delete(id=${medicines.medicineId})}"
+							id="deletelink" > <i
+								class="material-icons"
+								style="font-size: 25px; color: red; height: 20px; width: 20px; padding-left: 10px">delete</i>
+						</a></td>
+				</tr>
+				</th:block>
+			</table>
+		</div>
+	</div>
+
+	<div id="confirmationOverlay">
+		<div id="confirmationBox">
+			<p>Are you sure you want to delete this medicine?</p>
+			<button id="confirmDelete">Yes</button>
+			<button >No</button>
+		</div>
+	</div>
+
+	<div id="notificationContainer" style="display: none"></div>
+	<th:block th:if="${totalPages != null and medicine != null and not medicine.isEmpty()}">
+		
+			<div class="pagination">
+				<th:block th:if="${totalPages <= 10}">
+					<span th:each="i: ${#numbers.sequence(1, totalPages)}">
+						<a th:if="${currentPage != i}" th:href="@{'/seller/page/' + ${i}+ '?sellerId=' + ${sellerId}}">
+							[[${i}]]
+						</a>
+						<span class="span-css" th:unless="${i != currentPage}">[[${i}]]</span>
+						&nbsp;&nbsp;
+					</span>
+				</th:block>
+ 
+				<th:block th:if="${totalPages > 10}">
+					<th:block th:if="${currentPage <= 5 || currentPage > totalPages-4}">
+						<span th:each="i: ${#numbers.sequence(1, 5)}">
+							<a th:if="${currentPage != i}" th:href="@{'/seller/page/' + ${i}+ '?sellerId=' + ${sellerId}}">
+								[[${i}]]
+							</a>
+							<span class="span-css" th:unless="${i != currentPage}">[[${i}]]</span>
+							&nbsp;&nbsp;
+						</span>
+						<a th:if="${currentPage != totalPages - 4}" th:href="@{'/seller/page/' + ${totalPages - 4}}">
+							...
+						</a>
+						&nbsp;&nbsp;
+						<span class="span-css" th:unless="${totalPages - 4 != currentPage}">[[${totalPages - 4}]]</span>
+					</th:block>
+ 
+					<th:block th:if="${currentPage > 5 && currentPage <= totalPages-4}">
+						<a th:if="${currentPage != 1}" th:href="@{'/seller/page/' + 1}">
+							[[1]]
+						</a>
+						&nbsp;&nbsp;
+						<a th:if="${currentPage != currentPage - 5}" th:href="@{'/seller/page/' + ${currentPage - 5}}">
+							...
+						</a>
+						&nbsp;&nbsp;
+						<span class="span-css" th:unless="${currentPage - 5 != currentPage}">[[${currentPage -
+							5}]]</span>
+ 
+						<span th:each="i: ${#numbers.sequence(currentPage - 4, currentPage + 4)}">
+							<a th:if="${currentPage != i}" th:href="@{'/seller/page/' + ${i}+ '?sellerId=' + ${sellerId}}">
+								[[${i}]]
+							</a>
+							<span class="span-css" th:unless="${i != currentPage}">[[${i}]]</span>
+							&nbsp;&nbsp;
+						</span>
+ 
+						<a th:if="${currentPage != currentPage + 5}" th:href="@{'/seller/page/' + ${currentPage + 5}}">
+							...
+						</a>
+						&nbsp;&nbsp;
+						<span class="span-css" th:unless="${currentPage + 5 != currentPage}">[[${currentPage +
+							5}]]</span>
+					</th:block>
+				</th:block>
+			</div>
+		
+	</th:block>
+	
+	<script th:src="@{/css/seller-buyer.js}"></script>
+</body>
+
+</html>
